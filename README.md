@@ -16,7 +16,7 @@ If you find our paper useful for your research , please include the following ci
 ```
 
 @inproceedings{aneja2022clipface,
-    		  title={{C}lip{F}ace: {T}ext-guided {E}diting of {T}extured 3{D} {M}orphable {M}odels},
+    	title={{C}lip{F}ace: {T}ext-guided {E}diting of {T}extured 3{D} {M}orphable {M}odels},
                author={Aneja, Shivangi and Thies, Justus and Dai, Angela and Nießner, Matthias},
                booktitle={ArXiv preprint arXiv:2212.01406},
                year={2022}
