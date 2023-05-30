@@ -1,0 +1,7 @@
+.idea/*
+build/*
+__pycache__/
+data
+ckpts
+wandb
+*.log
