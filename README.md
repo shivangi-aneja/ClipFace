@@ -27,7 +27,7 @@ Please download these models, as they will be required for experiments.
 
 | Path                                  | Description
 |:--------------------------------------| :----------
-| [FLAME](https://flame.is.tue.mpg.de/) | We use FLAME 3DMM in our experiments. FLAME takes as input shape, pose and expression blendshapes and predicts mesh vertices. We used the **FLAME 2020 generic model** for our experiments. Using any other FLAME model might lead to wrong mesh predictions for expression manipulation experiments. Please download the model from the official website by signing their user agreement.
+| [FLAME](https://flame.is.tue.mpg.de/) | We use FLAME 3DMM in our experiments. FLAME takes as input shape, pose and expression blendshapes and predicts mesh vertices. We used the **FLAME 2020 generic model** for our experiments. Using any other FLAME model might lead to wrong mesh predictions for expression manipulation experiments. Please download the model from the official website by signing their user agreement. Copy the generic model as `data/flame/generic_model.pkl` and FLAME template as `data/flame/head_template.obj` in the project directory.
 | [DECA](https://deca.is.tue.mpg.de/)                              | DECA model predicts FLAME parameters for an RGB image. This is used during training StyleGAN-based texture generator, is available for download [here](https://drive.google.com/file/d/1hIpapFDc0dWJMJQgFHgWcDTSmjUCEmzL/) This can be skipped you don't intend to train the texture generator and use our pre-trained texture generator. 
 
 
@@ -62,6 +62,7 @@ The code is well-documented and should be easy to follow.
 | [Filtered FFHQ Dataset](https://drive.google.com/drive/folders/17be2i3L7Eb1Tgmkb_dKMYDAmDs4m2CVe?usp=sharing) | Download the filenames of Filtered FFHQ dataset; alpha masks and FLAME-space mesh vertices predicted using DECA. This can be skipped if you don't intend to train the texture generator and use our pre-trained texture generator.
 | [Texture Generator](https://drive.google.com/file/d/1R8PZfoPwe_u4GpzeQ_FvCpBbr50DjwP9/)                       | The pretrained texture generator to synthesize UV texture maps.
 | [UV Texture Latent Codes](https://drive.google.com/file/d/1vzAxA_6HFkECRMPgumrvLJW2M3xAiGvI/)                 | The latent codes generated from texture generator used to train the text-guided mapper networks.
+| [Text-Manipulation Assets](https://drive.google.com/drive/folders/1beR9YHErIkb5EtLk0rLbcDV8TfdmEPt1/)         | The flame parameters & vertices for a neutral template face, These will be used to perform clip-guided manipulation. Copy these to `data/clip/` directory.
 | [Pretrained Mappers](https://drive.google.com/file/d/15GUI-v3vf8VsAFwbBPS3EEYFaAEl0GQP/)                      | Pretrained mappers to predict zero offsets for text-guided manipulation
 | Pretrained Texture & Expression Manipulation Models                                                           | Pretrained ClipFace checkpoints for different texture and expression styles shown in paper. Texture manipulation models can be downloaded from [here](https://drive.google.com/drive/folders/1B-BOL2EzBNBpZOmJZY7Xwpm783S8PzJs/); and expression manipulation models can be downloaded from [here](https://drive.google.com/drive/folders/1fxBm59PQB1_3Mh11DZOBb3za0gqtYy_F/).
 
