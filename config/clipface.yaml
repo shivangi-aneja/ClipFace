@@ -1,0 +1,91 @@
+# Basic Params
+experiment: clipface_exp_sanity
+seed: null
+save_epoch: 1
+sanity_steps: 1
+max_epoch: 20
+scheduler: null
+val_check_percent: 0.25
+val_check_interval: 0.1
+log_every_n_steps: 1
+resume: null
+init_with_base: False
+
+# Pretrained Paths (For Training StyleGAN)
+base_dir: 'results/'   # To dump all the results
+flame_obj: 'data/flame/head_template.obj' # The FLAME template
+flame_model_path: 'data/flame/generic_model.pkl'  # Path for Flame generic model
+
+
+# Pretrained Paths (For Training Clip-MLP)
+pretrained_stylegan_pth: 'ckpts/stylegan_G.pth'
+pretrain_mapper: 'ckpts/pretrain_mapper.ckpt'
+w_train_pth: 'dataset/clip_latents_train/'
+w_val_pth: 'dataset/clip_latents_val/'
+
+# Flame Params
+shape_params: 100
+tex_params: 50
+expression_params: 50
+camera_params: 3
+global_rot_pose_params: 3
+neck_pose_params: 3
+jaw_rot_pose_params: 3
+eye_pose_params: 6
+
+light_params: 27
+jaw_type: 'euler'   # [aa | euler] default use axis angle, another option: euler. Note that: aa is not stable in the beginning
+flame_param_list: ['shape', 'tex', 'expression', 'pose', 'camera', 'light']
+use_face_contour: True
+flame_params: 1
+cropped_face: False
+
+
+# StyleGAN Related
+num_mapping_layers: 8
+latent_dim: 512
+generator: stylegan2
+
+
+# Dataloader
+image_size: 512
+deca_size: 224
+num_eval_images: 32
+num_vis_images: 32
+batch_size: 1
+batch_gpu: null
+num_workers: 0
+save_iters: 64
+
+
+# Clip-Related
+clip_model: 'openai'  # openai | laion
+base_prompt: 'A photo of a face'
+altered_prompt: 'An photo of a face that looks like Mona Lisa'   # For texture
+#altered_prompt: 'An photo of an angry face'   # For texure & expression
+clip_loss_type: 'cosine'  # cosine | mse | mae
+clip_directional: True
+
+lr_latent: 0.0
+
+# For text-guided manipulations of texture & expressions MLP (18-level MLP)
+lr_tex: 0.0001
+lr_exp: 0.005
+
+# Texture Space
+optimize_w: True
+
+# Lambdas
+lambda_exp: 0.01
+
+
+# Wandb
+wandb_main: False
+suffix: ''
+
+
+# Misc
+hydra:
+  output_subdir: null # Disable saving of config files. We'll do that ourselves.
+  run:
+    dir: .

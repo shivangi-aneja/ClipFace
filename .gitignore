@@ -5,3 +5,6 @@ data
 ckpts
 wandb
 *.log
+results
+clipface_ckpts
+venv_clipface

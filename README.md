@@ -27,16 +27,16 @@ Please download these models, as they will be required for experiments.
 
 | Path                                  | Description
 |:--------------------------------------| :----------
-| [FLAME](https://flame.is.tue.mpg.de/) | We use FLAME 3DMM in our experiments. FLAME takes as input shape, pose and expression blendshapes and predicts mesh vertices. We used the **FLAME 2020 generic model** for our experiments. Using any other FLAME model might lead to wrong mesh predictions for expression manipulation experiments. Please download the model from the official website by signing user agreement.
-| [DECA](https://deca.is.tue.mpg.de/)                              | DECA model predicts FLAME parameters for an RGB image. This is used during training StyleGAN-based texture generator, is available for download [here](https://drive.google.com/file/d/1kCfIGLcb00TGxFZjUWOnXu-LLfcKc-7k/) This can be skipped you don't intend to train the texture generator and use our pre-trained texture generator. 
+| [FLAME](https://flame.is.tue.mpg.de/) | We use FLAME 3DMM in our experiments. FLAME takes as input shape, pose and expression blendshapes and predicts mesh vertices. We used the **FLAME 2020 generic model** for our experiments. Using any other FLAME model might lead to wrong mesh predictions for expression manipulation experiments. Please download the model from the official website by signing their user agreement.
+| [DECA](https://deca.is.tue.mpg.de/)                              | DECA model predicts FLAME parameters for an RGB image. This is used during training StyleGAN-based texture generator, is available for download [here](https://drive.google.com/file/d/1hIpapFDc0dWJMJQgFHgWcDTSmjUCEmzL/) This can be skipped you don't intend to train the texture generator and use our pre-trained texture generator. 
 
 
 ### <a id="section3">3. Training</a>
 
 The code is well-documented and should be easy to follow.
-* **Source Code:**   `$ git clone` this repo and install the dependencies from `requirements.txt`. The source code is implemented in PyTorch Lightning and differentiable rendering with NvDiffrast so familiarity with these is expected.
+* **Source Code:**   `$ git clone` this repo and install the dependencies from `requirements.txt`. The source code is implemented in PyTorch Lightning and differentiable rendering with NvDiffrast so familiarity with these is expected. 
 * **Dataset:** We used FFHQ dataset to train our texture generator. This is publicly available [here](https://github.com/NVlabs/ffhq-dataset). All images are resized to 512 X 512 for our experiments.
-* **Data Generation:** From the original FFHQ dataset (70,000 images), we first remove images with headwear and eyewear. This gives us a clean and filtered FFHQ dataset (~45,000 images), which we use to train our stylegan-based texture generator. We use DECA model to predict FLAME parameters for each image in this filtered dataset. We pre-compute these FLAME parameters prior to training the generator model. We then use FLAME to predict mesh vertices for each image. Finally, we render the mesh with texture maps generated using our generator using differentiable rendering. For real images, we mask out background and mouth interior using alpha masks extracted from DECA. We provide the filtered image list, alpha masks and FLAME parameters for the filtered dataset [here](#section4) for simplicity. The source code for this can be found in `data_generation/` directory.  
+* **Data Generation:** From the original FFHQ dataset (70,000 images), we first remove images with headwear and eyewear. This gives us a clean and filtered FFHQ dataset (~45,000 images), which we use to train our stylegan-based texture generator. We use DECA model to predict FLAME parameters for each image in this filtered dataset. We pre-compute these FLAME parameters prior to training the generator model. We then use FLAME to predict mesh vertices for each image. Finally, we render the mesh with texture maps generated using our generator using differentiable rendering. For real images, we mask out background and mouth interior using alpha masks extracted from DECA. We provide the filtered image list, alpha masks and FLAME parameters for the filtered dataset [here](#section4) for simplicity.  
 * **Training**: Run the corresponding scripts depending on whether you want to train the texture generator or perform text-guided manipulation. The scripts for training are available in `trainer/` directory.
   - **Texture Generator:** We use StyleGAN2 generator with adaptive discriminator [StyleGAN-ADA](https://github.com/NVlabs/stylegan2-ada) to generate UV maps due to its faster convergence. To train, run the following command:
   ```.bash
@@ -57,24 +57,27 @@ The code is well-documented and should be easy to follow.
   
 ### <a id="section4">4. ClipFace Pretrained Models and Dataset Assets</a>
 
-| Path                        | Description
-|:----------------------------| :----------
-| [Filtered FFHQ Dataset]()   | Run the script to download the Filtered FFHQ dataset with alpha masks and FLAME parameters for each image.
-| [Texture Generator]()       | The texture generator to synthesize UV texture maps
-| [UV Texture Latent Codes]() | The latent codes generated from texture generator used to train the text-guided mapper networks.
-| [Pretrained Mappers]()      | Pretrained mappers to predict zero offsets for text-guided manipulation
+| Path                                                                                                          | Description
+|:--------------------------------------------------------------------------------------------------------------| :----------
+| [Filtered FFHQ Dataset](https://drive.google.com/drive/folders/17be2i3L7Eb1Tgmkb_dKMYDAmDs4m2CVe?usp=sharing) | Download the filenames of Filtered FFHQ dataset; alpha masks and FLAME-space mesh vertices predicted using DECA. This can be skipped if you don't intend to train the texture generator and use our pre-trained texture generator.
+| [Texture Generator](https://drive.google.com/file/d/1R8PZfoPwe_u4GpzeQ_FvCpBbr50DjwP9/)                       | The pretrained texture generator to synthesize UV texture maps.
+| [UV Texture Latent Codes](https://drive.google.com/file/d/1vzAxA_6HFkECRMPgumrvLJW2M3xAiGvI/)                 | The latent codes generated from texture generator used to train the text-guided mapper networks.
+| [Pretrained Mappers](https://drive.google.com/file/d/15GUI-v3vf8VsAFwbBPS3EEYFaAEl0GQP/)                      | Pretrained mappers to predict zero offsets for text-guided manipulation
+| Pretrained Texture & Expression Manipulation Models                                                           | Pretrained ClipFace checkpoints for different texture and expression styles shown in paper. Texture manipulation models can be downloaded from [here](https://drive.google.com/drive/folders/1B-BOL2EzBNBpZOmJZY7Xwpm783S8PzJs/); and expression manipulation models can be downloaded from [here](https://drive.google.com/drive/folders/1fxBm59PQB1_3Mh11DZOBb3za0gqtYy_F/).
+
+[//]: # (| Pretrained Video Manipulation Sequences                                                                       | Coming soon!)
 
 
 
 
 ### <a id="section5">5. Inference</a>
 
-* **Evaluation:**  Once training is complete, then to evaluate, specify the path to mapper model in the script file and evaluate.
+* **Evaluation:**  Once training is complete, then to evaluate, specify the path to the uv-map latent code & mapper model (Line 42-43) in the script files and evaluate.
 ```.bash
-  # To train only for texture manipulation
+  # To evaluate only for texture manipulation
   python -m tests.test_mlp_texture
   
-  # To train for both texture and expression manipulation
+  # To evaluate for both texture and expression manipulation
   python -m tests.test_mlp_texture_expression
   ```
 
@@ -100,7 +103,7 @@ If you find our dataset or paper useful for your research , please include the f
 
 </br>
 
- Contact Us
+### Contact Us
 
 If you have questions regarding the dataset or code, please email us at shivangi.aneja@tum.de. We will get back to you as soon as possible.
 

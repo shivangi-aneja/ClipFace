@@ -1,0 +1,80 @@
+# Basic Params
+experiment: stylegan_ada_sanity
+seed: null
+save_epoch: 1
+sanity_steps: 1
+max_epoch: 2000
+scheduler: null
+val_check_percent: 1.0
+val_check_interval: 1.0
+log_every_n_steps: 10
+resume: null
+init_with_base: False
+
+
+# Path Params
+base_dir: 'results/'   # To dump all the results
+flame_obj: 'data/flame/head_template.obj'
+flame_model_path: 'data/flame/generic_model.pkl'  # Path for Flame model
+ffhq_dir_512: 'data_ffhq_filtered/FFHQ_512_filtered/'   # Masked RGB images (real distribution)
+ffhq_verts_dir: 'data_ffhq_filtered/FFHQ_verts_filtered/'     # The deformed flame mesh vertices
+
+
+# Flame Params
+shape_params: 100
+tex_params: 50
+expression_params: 50
+camera_params: 3
+pose_params: 6
+light_params: 27
+jaw_type: 'aa'   # default use axis angle, another option: euler. Note that: aa is not stable in the beginning
+flame_param_list: ['shape', 'tex', 'expression', 'pose', 'camera', 'light']
+use_face_contour: True
+flame_params: 1
+cropped_face: False
+
+
+# StyleGAN Related
+num_mapping_layers: 8
+lr_g: 0.002
+lr_d: 0.000235
+lazy_gradient_penalty_interval: 16
+lazy_path_penalty_after: 0
+lazy_path_penalty_interval: 4
+latent_dim: 512
+lambda_gp: 0.0256
+lambda_plp: 2
+ada_start_p: 0.  #to disable set to -1
+ada_target: 0.6
+ada_interval: 4
+ada_fixed: False
+generator: stylegan2
+
+
+# Dataloader
+image_size: 512
+deca_size: 224
+num_eval_images: 32
+num_vis_images: 32
+batch_size: 16
+batch_gpu: null
+num_workers: 0
+save_iters: 64
+
+
+# Patch Discriminator
+patch_size: 64
+patch_stride: 16
+num_patches: 16
+
+
+# Wandb
+wandb_main: False
+suffix: ''
+
+
+# Misc
+hydra:
+  output_subdir: null # Disable saving of config files. We'll do that ourselves.
+  run:
+    dir: .
