@@ -6,7 +6,7 @@ import torch.multiprocessing
 import pytorch_lightning as pl
 from trainer import create_trainer
 from util.stylegan_utils import *
-from util.misc import transform_points, get_parameters_from_state_dict
+from util.misc import transform_points
 from dataset.face_mesh import FaceMesh
 from criteria.clip_loss import ClipLoss
 from torch.utils.data import DataLoader
@@ -50,14 +50,14 @@ class StyleGANOptimizer(pl.LightningModule, ABC):
 
         # Mapper for expressions
         self.geometry_mapper = Mapper(z_dim=config.latent_dim, w_dim=config.expression_params, num_layers=4)
-        state_dict = torch.load(config.pretrain_mapper, map_location=torch.device("cpu"))["state_dict"]
-        self.geometry_mapper.load_state_dict(get_parameters_from_state_dict(state_dict, "geometry_mapper"))
+        state_dict = torch.load(config.pretrain_mapper, map_location=torch.device("cpu"))
+        self.geometry_mapper.load_state_dict(state_dict["geometry_mapper"])
 
         # Mapper for textures
         self.texture_mapper_list = []
         for i in range(18):
             mapper = Mapper(z_dim=config.latent_dim, w_dim=config.latent_dim, num_layers=4)
-            mapper.load_state_dict(get_parameters_from_state_dict(state_dict, "texture_mapper"))
+            mapper.load_state_dict(state_dict["texture_mapper"])
             self.texture_mapper_list.append(mapper)
 
     def configure_optimizers(self):

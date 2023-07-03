@@ -19,9 +19,13 @@ flame_model_path: 'data/flame/generic_model.pkl'  # Path for Flame generic model
 
 # Pretrained Paths (For Training Clip-MLP)
 pretrained_stylegan_pth: 'ckpts/stylegan_G.pth'
-pretrain_mapper: 'ckpts/pretrain_mapper.ckpt'
+pretrain_mapper: 'ckpts/pretrain_mapper.pt'
 w_train_pth: 'dataset/clip_latents_train/'
 w_val_pth: 'dataset/clip_latents_val/'
+
+# Expression Codes for vides
+exp_codes_pth: 'data_expressions/flame/laugh_aligned/'
+#exp_codes_pth: 'data_expressions/flame/angry_aligned/'
 
 # Flame Params
 shape_params: 100

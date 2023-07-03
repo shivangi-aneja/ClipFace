@@ -13,13 +13,14 @@ from torchvision.utils import save_image
 from model.flame.flame_model import FLAME
 from model.stylegan_ada.generator import Generator
 from pytorch_lightning.utilities import rank_zero_only
-from util.misc import transform_points, get_parameters_from_state_dict
+from util.misc import transform_points
 from model.renderer.differentiable_renderer import DifferentiableRenderer, transform_pos_mvp
 
 torch.multiprocessing.set_sharing_strategy('file_system')  # a fix for the "OSError: too many files" exception
 torch.backends.cudnn.benchmark = True
 torch.backends.cudnn.allow_tf32 = True
 torch.backends.cudnn.deterministic = True
+
 
 class StyleGANOptimizer(pl.LightningModule, ABC):
 
@@ -47,13 +48,13 @@ class StyleGANOptimizer(pl.LightningModule, ABC):
         self.G.load_state_dict(torch.load(config.pretrained_stylegan_pth, map_location=torch.device("cpu")))
         self.G.eval()
 
-        state_dict = torch.load(config.pretrain_mapper, map_location=torch.device("cpu"))["state_dict"]
+        state_dict = torch.load(config.pretrain_mapper, map_location=torch.device("cpu"))
 
         # Mapper for expression conditioned textures
         self.texture_mapper_list = []
         for i in range(18):
             mapper = Mapper(z_dim=config.latent_dim, w_dim=config.latent_dim, num_layers=4)
-            mapper.load_state_dict(get_parameters_from_state_dict(state_dict, "texture_mapper"))
+            mapper.load_state_dict(state_dict["texture_mapper"])
             self.texture_mapper_list.append(mapper)
 
     def configure_optimizers(self):

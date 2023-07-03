@@ -36,19 +36,24 @@ Please download these models, as they will be required for experiments.
 The code is well-documented and should be easy to follow.
 * **Source Code:**   `$ git clone` this repo and install the dependencies from `requirements.txt`. The source code is implemented in PyTorch Lightning and differentiable rendering with NvDiffrast so familiarity with these is expected. 
 * **Dataset:** We used FFHQ dataset to train our texture generator. This is publicly available [here](https://github.com/NVlabs/ffhq-dataset). All images are resized to 512 X 512 for our experiments.
-* **Data Generation:** From the original FFHQ dataset (70,000 images), we first remove images with headwear and eyewear. This gives us a clean and filtered FFHQ dataset (~45,000 images), which we use to train our stylegan-based texture generator. We use DECA model to predict FLAME parameters for each image in this filtered dataset. We pre-compute these FLAME parameters prior to training the generator model. We then use FLAME to predict mesh vertices for each image. Finally, we render the mesh with texture maps generated using our generator using differentiable rendering. For real images, we mask out background and mouth interior using alpha masks extracted from DECA. We provide the filtered image list, alpha masks and FLAME parameters for the filtered dataset [here](#section4) for simplicity.  
+* **Data Generation:** From the original FFHQ dataset (70,000 images), we first remove images with headwear and eyewear. This gives us a clean and filtered FFHQ dataset (~45,000 images), which we use to train our stylegan-based texture generator. We use DECA model to predict FLAME parameters for each image in this filtered dataset. We pre-compute these FLAME parameters prior to training the generator model. We then use FLAME to predict mesh vertices for each image. Finally, we render the mesh with texture maps generated using our generator using differentiable rendering. For real images, we mask out background and mouth interior using alpha masks extracted from DECA. We provide the filtered image list, alpha masks and FLAME parameters for the filtered dataset in [Section 4](#section4) for simplicity. For texture manipulation of video sequence, we provide the pre-computed FLAME parameters for the video sequences (Laughing & Angry) in [Section 4](#section4).   
 * **Training**: Run the corresponding scripts depending on whether you want to train the texture generator or perform text-guided manipulation. The scripts for training are available in `trainer/` directory.
   - **Texture Generator:** We use StyleGAN2 generator with adaptive discriminator [StyleGAN-ADA](https://github.com/NVlabs/stylegan2-ada) to generate UV maps due to its faster convergence. To train, run the following command:
   ```.bash
   python -m trainer.trainer_stylegan.train_stylegan_ada_texture_patch
   ```
-  - **Text-guided  Manipulation:** We perform text-guided manipulation on textures generated using our pre-trained texture generator trained above. We first pre-train the mapper networks to predict zero offsets before performing text-guided manipulation, checkpoints available [here](#section4).  Run these scripts to perform text-guided manipulation.
+  - **Text-guided  Manipulation:** We perform text-guided manipulation on textures generated using our pre-trained texture generator trained above. We first pre-train the mapper networks to predict zero offsets before performing text-guided manipulation, this pretrained checkpoint is available in [Section 4](#section4).  Run these scripts to perform text-guided manipulation.
   ```.bash
   # To train only for texture manipulation
   python -m trainer.trainer_texture_expression.train_mlp_texture
   
   # To train for both texture and expression manipulation
   python -m trainer.trainer_texture_expression.train_mlp_texture_expression
+  ```
+- **Text-guided Video Manipulation:** In the paper, we show results for temporally changing textures guided by text prompts. Similar to above, we pre-train the mapper network to predict zero offsets before performing text-guided manipulation, however here the mapper is conditioned on image latent code as well as expression and pose code; Checkpoints available in [Section 4](#section4).  Run the following script to manipulate temporally changing texture.
+  ```.bash
+  # To synthesize temporal textures for given video sequence
+  python -m trainer.trainer_video.train_video_mlp_texture.py
   ```
 
 * **Path Configuration:** The configuration for training texture generator is `configs/stylegan_ada.yaml` and for text-guided manipulation is `configs/clipface.yaml`. Please refer to these files to configure the data paths and model paths for training.
@@ -63,17 +68,19 @@ The code is well-documented and should be easy to follow.
 | [Texture Generator](https://drive.google.com/file/d/1R8PZfoPwe_u4GpzeQ_FvCpBbr50DjwP9/)                       | The pretrained texture generator to synthesize UV texture maps.
 | [UV Texture Latent Codes](https://drive.google.com/file/d/1vzAxA_6HFkECRMPgumrvLJW2M3xAiGvI/)                 | The latent codes generated from texture generator used to train the text-guided mapper networks.
 | [Text-Manipulation Assets](https://drive.google.com/drive/folders/1beR9YHErIkb5EtLk0rLbcDV8TfdmEPt1/)         | The flame parameters & vertices for a neutral template face, These will be used to perform clip-guided manipulation. Copy these to `data/clip/` directory.
-| [Pretrained Mappers](https://drive.google.com/file/d/15GUI-v3vf8VsAFwbBPS3EEYFaAEl0GQP/)                      | Pretrained mappers to predict zero offsets for text-guided manipulation
+| [Video Manipulation Dataset](https://drive.google.com/drive/folders/1MM39T62k4Kaf2Mf4oN_p6QAkNifwPndp/)       | In the paper, for temporal textures we show results for two text prompts (laughing and angry). Here we provide the pre-computed FLAME parameters for these sequences. Download them and extract to appropriate directory and configure the path corresponding to key `exp_codes_pth` in `config/clipface.yaml`.
+| [Pretrained Zero-Offset Mapper](https://drive.google.com/file/d/1zy4CeiJaubFlJ9l1ODn7qPxlDxOOmYfv/)           | Pretrained mappers to predict zero offsets for text-guided manipulation
 | Pretrained Texture & Expression Manipulation Models                                                           | Pretrained ClipFace checkpoints for different texture and expression styles shown in paper. Texture manipulation models can be downloaded from [here](https://drive.google.com/drive/folders/1B-BOL2EzBNBpZOmJZY7Xwpm783S8PzJs/); and expression manipulation models can be downloaded from [here](https://drive.google.com/drive/folders/1fxBm59PQB1_3Mh11DZOBb3za0gqtYy_F/).
+| [Pretrained Zero-Offset Video Mapper](https://drive.google.com/file/d/12b51mBKvkRcrYw_-xFsBSFZIOaD7FLFh/)     | Pretrained mappers to predict zero offsets for text-guided video manipulation
+| Pretrained Video Manipulation Models                                                                          | Pretrained ClipFace checkpoints for video manipulation. For the text-prompt laughing available [here](https://drive.google.com/file/d/18ZlDWk4EMdws1ur2E52Rsvn_qvRPPR40/). And for text prompt angry available [here](https://drive.google.com/file/d/1gQmuqBs9IhGD4ddVQ07-OeIuSlG88geg/).
 
-[//]: # (| Pretrained Video Manipulation Sequences                                                                       | Coming soon!)
 
 
 
 
 ### <a id="section5">5. Inference</a>
 
-* **Evaluation:**  Once training is complete, then to evaluate, specify the path to the uv-map latent code & mapper model (Line 42-43) in the script files and evaluate.
+* **Inference on texture & expression manipulation models:**  Once training is complete, then to evaluate, specify the path to the uv-map latent code & mapper model (Line 42-43) in the script files and evaluate.
 ```.bash
   # To evaluate only for texture manipulation
   python -m tests.test_mlp_texture
@@ -81,6 +88,14 @@ The code is well-documented and should be easy to follow.
   # To evaluate for both texture and expression manipulation
   python -m tests.test_mlp_texture_expression
   ```
+
+* **Inference on video manipulation models:**  To evaluate the dynamic texture manipulation model for video sequences, then to evaluate, specify the path to the uv-map latent code & mapper model (Line 49-50) in the script file and run the following script.
+```.bash
+  # To evaluate temporal textures for given video sequence
+  python -m tests.test_video_mlp_texture
+  ```
+
+
 
 
 </br>

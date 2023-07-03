@@ -43,17 +43,18 @@ def visualize_rendering():
     w_init_pth = 'clip_latents_val/w_000049_7548.pt'    # TODO: Update texture latent code path here
     _flame = FLAME(config)
     _renderer = DifferentiableRenderer(image_size, mode='standard', num_channels=3, shading=False)
+
     _G = Generator(z_dim=config.latent_dim, w_dim=config.latent_dim, w_num_layers=config.num_mapping_layers,
                    img_resolution=config.image_size, img_channels=3, synthesis_layer=config.generator)
-    _texture_mapper_list = []
 
-    # Load the pretrained checkpoints
+    _texture_mapper_list = []
     mapper_state_dict = torch.load(tex_mapper_ckpt)
     for level in range(18):
         mapper = Mapper(z_dim=config.latent_dim, w_dim=config.latent_dim, num_layers=4)
         mapper.load_state_dict(mapper_state_dict[f"level_{level}"])
         mapper = mapper.to(torch.device("cuda:0"))
         _texture_mapper_list.append(mapper)
+
     _G.load_state_dict(torch.load(config.pretrained_stylegan_pth, map_location=torch.device("cpu")))
     _G.eval()
     w_init_code = torch.load(w_init_pth)
